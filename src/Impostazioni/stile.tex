@@ -1,0 +1,18 @@
+\pagestyle{fancy}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+% redifine command \chaptermark, take [1] argument. 
+% chaptermark is automatically called when creating chapter
+% now chaptermark sets leftmark to be the title of the chapter
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+
+\raggedbottom % Se la pagina non è completa, lascia lo spazio alla fine
+
+% [display] to place on 2 lines, [hang] on 1 line
+%\titleformat{\chapter}[display]{\chapterNumberSize\bfseries}{\thechapter}{10pt}{\Huge}
+    
+%\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+
+\setlist[itemize,2]{label=$\circ$}

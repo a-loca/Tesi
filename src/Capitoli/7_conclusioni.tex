@@ -1,0 +1,222 @@
+\chapter{Conclusioni e sviluppi futuri}
+\label{conclusioni}
+
+\section{Conclusioni}
+I risultati sul dataset LODB sono inferiori alle nostre aspettative, mentre per KU-PCP, le prestazioni sono al di sotto dello stato dell'arte, ma le metriche presentano comunque valori alti. Questo risulta sospetto, viste le prestazioni sull'altro dataset. Di seguito si espande su alcune delle motivazioni che potrebbero giustificare questi risultati e si traggono delle conclusioni sull'utilizzo di DINOv2 per il task di riconoscimento della composizione fotografica.
+
+\subsection{DINOv2}
+\label{dinov2_conclusioni}
+DINOv2 è nato per essere un modello di classificazione semantica dei soggetti in una immagine. Di conseguenza, l'intuizione è che le \textbf{features} che esso produce siano troppo \textbf{fortemente orientate a descrivere il contenuto semantico} dell'immagine, \textbf{piuttosto che} il come l'immagine in sé sia fatta, le sue \textbf{caratteristiche di alto livello}, fra cui la composizione. Questo, oltre ad altri fattori di composizione del dataset che si esploreranno in seguito, spiegherebbe le prestazioni molto basse su LODB. 
+
+La scarsa varianza intraclasse registrata in KU-PCP, invece, è molto probabilmente il motivo per cui le prestazioni su di esso risultano più alte rispetto a LODB. Il modello potrebbe involontariamente associare una determinata classe di composizione al contenuto delle immagini in cui essa viene più spesso utilizzata. Ad esempio, la classe \textit{vertical} coincide nella maggior parte delle immagini a paesaggi urbani, con grandi palazzi e grattacieli, o a paesaggi boschivi, con alti alberi. Il classificatore potrebbe capire queste associazioni (\textit{vertical}-grattacielo o \textit{vertical}-albero), piuttosto che il vero significato di una leading line verticale. 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.31\textwidth]{Immagini/conclusioni/0002.jpg}
+    \hspace{2mm}
+    \includegraphics[width=0.31\textwidth]{Immagini/conclusioni/0035.jpg}
+    \hspace{2mm}
+    \includegraphics[width=0.31\textwidth]{Immagini/conclusioni/0167.jpg}
+    \caption{Esempi di immagini nella classe \textit{vertical} nella partizione di test KU-PCP. Una quantità importante di immagini che appartengono a questa classe sono fotografie di grattacieli.}
+    \label{fig:vertical_examples}
+\end{figure}
+Lo stesso vale per la classe \textit{symmetric}, che spesso corrisponde ad un soggetto, frequentemente catene montuose, riflesso sulla superficie di un lago (Figura \ref{fig:symmetric_examples}), una delle poche situazioni in cui la simmetria si presenta in natura. Anche \textit{horizontal} è rappresentata sempre da orizzonti o separazioni nette fra cielo e area sottostante, e così via per le altre classi.
+Questo non è necessariamente un problema se l'obiettivo è solamente quello di riconoscere la composizione in foto di tipo paesaggistico. Aspetti come quelli codificati in \textit{vertical} o \textit{symmetric}, infatti, si verificano in natura solamente nelle situazioni descritte (alberi, palazzi, riflessi) e in poche altre rare occasioni. Se invece l'obiettivo è quello di classificare la composizione in una più vasta gamma di tipologie di immagine, questa limitata variazione semantica peggiorerà significativamente le prestazioni del modello. Questa spiegazione motiverebbe il fatto che i risultati peggiori in precision (Tabella \ref{tab:kupcp_metriche_classe}) si hanno nelle classi \textit{RoT}, \textit{Diagonal} e \textit{Curved}, che sono quelle rappresentate da immagini più variegate, che il classificatore non riesce sempre ad associare a soggetti ricorrenti.
+
+Inoltre, come detto, DINOv2 è allenato generalmente a classificare un solo soggetto nell'immagine. Questo potrebbe essere uno dei motivi per il quale i risultati in LODB sulle classi che si basano sul conteggio degli oggetti siano particolarmente bassi, oltre al problema dello sbilanciamento degli esempi visti dalla rete. 
+
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=0.31\textwidth]{Immagini/conclusioni/0064.jpg}
+    \hspace{2mm}
+    \includegraphics[width=0.31\textwidth]{Immagini/conclusioni/0237.jpg}
+    \hspace{2mm}
+    \includegraphics[width=0.31\textwidth]{Immagini/conclusioni/0820.jpg}
+    \caption{Esempi di immagini appartenenti alla classe \textit{symmetric} nella partizione di test di KU-PCP. A livello semantico, le immagini sono molto simili: montagne, alberi, foreste, riflessi in corpi d'acqua.}
+    \label{fig:symmetric_examples}
+\end{figure}
+
+
+\subsection{Riguardo i datasets}
+Come anticipato precedentemente e come puntualizzato anche dai creatori di LODB, la varianza semantica intraclasse di KU-PCP è un suo grosso punto debole. Lo stesso vale per la qualità troppo professionale delle sue foto. LODB, però, presenta a sua volta un grande numero di problematiche. I suoi creatori sostengono che le classi di KU-PCP siano troppo generiche per codificare tutti gli aspetti della composizione fotografica. Per questo motivo ne introducono altre otto, oltre a modificare alcune delle già esistenti. Dall'analisi del dataset e dei risultati ottenuti, però, questa granularità aggiunta può risultare eccessiva:
+\begin{itemize}
+    \item Vengono introdotte più classi che codificano differenze posizionali degli oggetti rispetto allo stesso stile compositivo, come \textit{RoT.L} e \textit{RoT.R}. Queste possono dare più dettaglio sul come è fisicamente composta l'immagine, ma non aggiungono particolare rilevanza rispetto ad avere un'unica classe \textit{RoT}, ad esempio. A livello strettamente fotografico, lo scatto finale riceve lo stesso beneficio apportato dalla regola dei terzi sia che il soggetto sia allineato alla parte sinistra della griglia che in quella destra (Figura \ref{fig:rule_of_thirds}). Lo stesso vale per \textit{DiaL.} e \textit{DiaR.}, e non solo.
+    
+    \item Allo stesso modo, si introducono delle classi distinte fra loro solamente dal numero di soggetti presenti nell'immagine. Un esempio sono \textit{O3Li.} e \textit{Oline} con altre classi quali \textit{O2Hor.}, \textit{O2Dia.R}, \textit{O2Dia.L}. Questo è un aspetto strettamente descrittivo dell'immagine e del suo contenuto, piuttosto che una sua caratteristica compositiva, quanto possono esserlo le leading lines o la regola dei terzi.
+    
+    \item L'aggiunta di un gran numero di classi non è accompagnata dall'aggiunta di un numero adeguato di immagini che possano rientrare nelle nuove categorie. Il dataset risulta essere \textbf{fortemente sbilanciato} (Tabella \ref{tab:lodb_comp}), con classi che contano più di 900 immagini, contro alcune delle nuove classi, che superano di poco le 100. Inoltre, le classi ad avere meno esempi sono proprio quelle introdotte da LODB. Questo si rispecchia pesantemente nei risultati ottenuti (Tabella \ref{tab:lodb_metriche_classe}).
+    
+    \item Spesso le classi si sovrappongono concettualmente (Figura \ref{fig:lodb_prob}), e quando sarebbe ragionevole assegnarne più di una ad una immagine, nella maggior parte delle volte non viene fatto. L'etichettamento è fatto in maniera molto conservativa, meno di 200 immagini presentano etichette doppie e nessuna tripla, quando da una analisi qualitativa del dataset, tante foto ne avrebbero giovato.
+\end{itemize}
+
+Riguardo all'obiettivo di aumentare la varianza intraclasse delle immagini, LODB migliora rispetto a KU-PCP. Ad esempio, la classe \textit{vertical}, su cui si è discusso precedentemente, ora comprende in generale strutture che si sviluppano in altezza. Questo, però, a scapito delle leading lines: mentre in KU-PCP \textit{Vertical} corrispondeva spesso a palazzi, alberi uscenti dalla scena, grandi città, che trasmettevano imponenza, forza, vastità, ora qualunque oggetto con altezza maggiore della sua larghezza possiede questa label (Figura \ref{fig:lodb_vertical}). Inoltre, la classe \textit{Curved} viene eliminata, sostituita dalla classe \textit{Radi.}, che codifica semplicemente oggetti circolari, ancora una volta perdendo il significato di leading line. 
+
+\begin{figure}[b]
+    \centering
+    \includegraphics[height=42mm]{Immagini/conclusioni/vertical1.jpg}
+    \hspace{2mm}
+    \includegraphics[height=42mm]{Immagini/conclusioni/vertical2.jpg}
+    \hspace{2mm}
+    \includegraphics[height=42mm]{Immagini/conclusioni/vertical3.jpg}
+    \caption{Esempi di immagini classificate come \textit{vertical} in LODB che non corrispondono a leading lines verticali.}
+    \label{fig:lodb_vertical}
+\end{figure}
+
+
+LODB si compone ancora in prevalenza di immagini professionali, ma introduce un maggior numero di snapshots e immagini più spontanee. Ci sono dei casi di classificazione errata o forzatura nell'assegnare le etichette (Figura \ref{fig:misclassification_lodb}), che avvengono anche in KU-PCP, come visto in Figura \ref{fig:kupcp_prob2}, che confondono le predizioni del modello.
+\begin{figure}[t]
+    \centering 
+    \begin{subfigure}{0.3\textwidth}
+        \subcaptionbox{Vertical}{\includegraphics[height=32mm]{Immagini/conclusioni/vertical_x.jpg}}
+    \end{subfigure}
+    \hspace{2mm}
+    \begin{subfigure}{0.3\textwidth}
+        \subcaptionbox{O2DiaL.}{\includegraphics[height=32mm]{Immagini/conclusioni/o2dial_x.jpg}}
+    \end{subfigure}
+    \hspace{2mm}
+    \begin{subfigure}{0.3\textwidth}
+        \subcaptionbox{O3Tri.}{\includegraphics[height=32mm]{Immagini/conclusioni/o3tri.jpg}}
+    \end{subfigure}
+    \caption{Esempi di misclassification/forzatura della composizione. Sono indicate le etichette che LODB assegna a ciascuna.}
+    \label{fig:misclassification_lodb}
+\end{figure}
+In generale, LODB è \textbf{adatto} a una \textbf{descrizione} di alto livello \textbf{della posizione e del numero degli oggetti} nell'immagine ed è meno orientato alla composizione fotografica classica, come presentata nel Capitolo \ref{composizione_fotografica}.
+
+
+\section{Sviluppi futuri}
+La risultati insoddisfacenti ottenuti in fase di sperimentazione hanno lasciato spazio a tanti ambiti in cui migliorare e tante idee per poterlo fare. Di seguito alcune delle strade ipotizzate.  
+
+\subsection{Dataset}
+Un primo ovvio passo potrebbe essere quello di \textbf{costruire un nuovo dataset ad hoc per il task}, che migliori KU-PCP e LODB. KU-PCP è stato sostanzialmente l'unico dataset disponibile per la classificazione della composizione fotografica fino a pochi giorni prima dell'inizio dello stage, quando LODB è stato pubblicato. Anche quest'ultimo, però, ha i suoi limiti, come è stato discusso. Un problema che entrambi hanno è il numero ristretto di immagini di cui si compongono (4244 e 6029), a causa del processo di annotazione che richiede supervisione umana, e oltre a ciò, le persone coinvolte devono conoscere le regole di composizione fotografica ed essere in grado di riconoscerle.
+
+Un'idea potrebbe essere quella di mantenere LODB come base, riducendo il numero di classi che lo compongono ed eliminando le immagini la cui classificazione appare ambigua o forzata. Dopodiché, possiamo effettuare uno scraping del web, specialmente di forum di condivisione di fotografia amatoriale e non, come Reddit (r/pics \cite{rpics_reddit}, r/photographs \cite{rphotographs_reddit}, r/photocritique \cite{rphotocritique_reddit}). Possiamo applicare le stesse tecniche di filtraggio e rimozione dei duplicati che usa DINOv2 (Sezione \ref{LVD}). Dovremmo raccogliere così un numero più che sufficiente di immagini.
+
+Rimane il problema di annotare le immagini. Il modo più efficiente per farlo è tramite una forma di crowdsourcing, se l'obiettivo è creare un dataset di dimensioni superiori a LODB, di almeno diecimila immagini. Potremmo creare un questionario che chieda a ciascun utente di classificare un sottoinsieme ridotto e casuale di immagini fra quelle raccolte e con le classi da noi stabilite. Il sondaggio verrebbe pubblicato online, sugli stessi forum menzionati, o condiviso tramite i canali dell'università.
+
+Quando ogni immagine possiederà un buon numero di opinioni su quale sia la sua regola di composizione, per scegliere quale sarà la classe finale da assegnare a ciascuna prendiamo la classe più votata, che deve anche aver superato una determinata quota di preferenze, almeno 70\%. Questo può andare a compensare una mancanza di controllo sul livello di conoscenza della composizione fotografica degli utenti che rispondono al questionario. Nel caso in cui ci siano altre classi che ricevono una percentuale dei voti al di sopra di una determinata soglia sul numero di preferenze ricevute dalla prima classe, allora anche questa rientrerà nella ground truth. 
+
+\subsection{Fine Tuning}
+Si è ipotizzato che una criticità di DINOv2 per la composizione fotografica sia l'essere troppo orientato alla classificazione semantica, essendo allenato appositamente a quello scopo. Una soluzione ovvia potrebbe essere fare un \textit{finetuning} della rete, allenando solamente gli ultimi layer del ViT sottostante, nella speranza che le features possano racchiudere meglio l'informazione compositiva. 
+
+Il problema di questo approccio è che per avere un impatto significativo sulle features è molto probabile che serva un numero di immagini molto superiore rispetto alle poche migliaia in KU-PCP o LODB. Nel paper di DINOv2 \cite{dinov2}, gli autori non menzionano finetuning per task specifici, ma in quello di DINO \cite{dino} si ottengono buone prestazioni finetunando su dataset come INat18 (600k immagini), ma anche su Cars (16k immagini). Per questo motivo, avrebbe comunque valore fare della sperimentazione coi due datasets a disposizione su DINOv2 con l'encoder più piccolo possibile, un ViT-S, anche se l'aspettativa è che il numero di immagini sia insufficiente.
+
+Una soluzione definitiva al problema sarebbe produrre il dataset sopra menzionato, ma una via più immediata potrebbe essere quella di impiegare delle \textbf{augmentations}: flip verticali e orizzontali, leggere rotazioni (come si è discusso nella Sezione \ref{spatial-invariant-cnn}), crop non distruttivi, modifiche che preservino la composizione dell'immagine. Questo può aiutare a rendere il modello più robusto e a creare un maggior numero di samples su cui fare finetuning della rete. 
+
+Potremmo impiegare lo stesso protocollo di augmentations anche per allenare il layer lineare o l'MLP usati nella fase sperimentale e verificare se ci sia un miglioramento nelle prestazioni della rete e se sia parzialmente anche il numero di immagini di allenamento a causare le prestazioni mediocri ottenute.
+
+
+\subsection{Mappe di self-attention}
+Una delle caratteristiche più importanti di DINO sono le mappe di self-attention che esso produce (Figura \ref{fig:dino_attention}). Queste permettono al modello di focalizzarsi sulle parti dell'immagine più di rilievo e risultano solitamente nella segmentazione dei soggetti nella foto. Forniscono una semplificazione dell'immagine che potremmo sfruttare per estrarre informazioni sulla posizione dei soggetti (\textit{RoT.}, \textit{Center}), sulla loro forma (\textit{Triangle}, \textit{Pattern}) e sulle leading lines. 
+
+La scelta di come usare le mappe è importante. Linearizzarle e passarle ad un classificatore come quelli usati nella fase sperimentale potrebbe distruggere l'informazione spaziale che esse codificano, rimuovendo dettagli molto importanti per il riconoscimento di classi come \textit{RoT.} o \textit{Center}. Per risolvere questo problema, si potrebbe apporre ai layer di classificazione una CNN. Come visto nel Capitolo \ref{sota}, finora le CNN sono state utilizzate nel risolvere questo task come feature extractor. Sarebbe interessante effettuare un confronto fra un utilizzo di quel tipo, contro una CNN solo ai fini della classificazione e combinata con un ViT come encoder, per verificare se partire dalle mappe di attention porti a dei vantaggi rispetto che semplicemente utilizzare le immagini originali.
+
+Un problema che potrebbe manifestarsi con la self-attention è che DINOv2 è stato pre-allenato a riconoscere prevalentemente immagini dotate di un soggetto, e per questo motivo, le mappe prodotte su un dataset come KU-PCP, che nella maggior parte dei casi è privo di soggetti in primo piano, potrebbero non essere buone come sperato, soprattutto quando si tratta di leading lines. Questa ipotesi viene parzialmente smentita da una analisi qualitativa delle mappe sul dataset (Figura \ref{fig:attention_kupcp}). In buona parte dei casi, tramite la self-attention si riesce a distinguere in maniera sufficientemente chiara la classe di ground truth. Esistono però diversi casi in cui l'attention cerca esplicitamente un soggetto nell'immagine, anche quando non esiste, ignorando il contesto generale, come in Figura \ref{fig:failed_attention_kupcp}. Con un eventuale finetuning, le mappe potrebbero migliorare sotto questo aspetto. In altri casi, la self-attention rischia di risultare troppo rumorosa affinchè la CNN possa riconoscerne chiaramente le classi. Per questo, si potrebbe pensare di applicare un filtro di \textit{smoothing} alle immagini in input al modello, per eliminare parte del dettaglio superfluo e permettere al ViT di concentrarsi sugli elementi più rilevanti nell'immagine, che coincideranno con le parti che sopravvivono alla sfocatura (Figura \ref{fig:att_rumorosa}).
+
+
+Un problema che rimane aperto e che dovrà essere esplorato è quello della scelta della testa di self-attention da utilizzare come immagine in input alla CNN. Nell'architettura di un ViT, il calcolo della self-attention viene fatto diverse volte per ciascun transformer block che compone l'encoder (Figura \ref{fig:attention}), compreso l'ultimo blocco, da cui estraiamo la mappa finale di self-attention. Nel caso di DINOv2, i ViT ripetono 6 volte il calcolo. Per questo motivo, abbiamo 6 possibili mappe fra cui poter scegliere. Come si nota in Figura \ref{fig:attention_heads_ex}, le differenze fra ciascuna sono importanti e la scelta della immagine migliore impatterà sicuramente sulle prestazioni del classificatore. Un approccio potrebbe essere trattarle come una unica immagine a 6 canali da dare in input alla CNN e verificare che la quantità di informazioni fornite non sia eccessiva e che le mappe più rumorose non inquinino l'output che si avrebbe utilizzando solo quelle più riconoscibili.
+
+\vspace{5mm}
+\begin{figure}[p]
+    \centering
+    \subcaptionbox{Horizontal, Curve}{
+    \includegraphics[height=46mm]{Immagini/conclusioni/hor_curve.jpg}
+    \hspace{3mm}
+    \includegraphics[height=46mm]{Immagini/conclusioni/hor_curv_att2.png}
+    }
+    
+    \subcaptionbox{Pattern}{
+    \includegraphics[height=37mm]{Immagini/conclusioni/pat.jpg}
+    \hspace{3mm}
+    \includegraphics[height=37mm]{Immagini/conclusioni/pat_att2.png}
+    }
+
+    \subcaptionbox{Triangle}{
+    \includegraphics[height=46mm]{Immagini/conclusioni/tri.jpg}
+    \hspace{3mm}
+    \includegraphics[height=46mm]{Immagini/conclusioni/tri_att4.png}
+    }
+    
+    \caption{Alcuni esempi di immagini di KU-PCP le cui mappe di attention permettono di individuare chiaramente la classe assegnata. Sono indicate le classi di ground truth.}
+    \label{fig:attention_kupcp}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[height=45mm]{Immagini/conclusioni/vert.jpg}
+    \hspace{3mm}
+    \includegraphics[height=45mm]{Immagini/conclusioni/vert_att1.png}
+    \caption{Classe \textit{vertical}. Si nota come l'attention si concentri sul ponte che collega i due grattacieli, ma ignori tutti gli altri edifici circostanti. Questo potrebbe rendere complicato il riconoscimento della sua classe.}
+    \label{fig:failed_attention_kupcp}
+\end{figure}
+
+\begin{figure}[b]
+    \centering
+    \begin{subfigure}{0.35\textwidth}
+        \raggedright
+        \subcaptionbox{Originale}{\includegraphics[height=90mm]{Immagini/conclusioni/rot_diag.jpg}}
+    \end{subfigure}
+    \hspace{1cm}
+    \begin{subfigure}{0.35\textwidth}
+        \raggedleft
+        \subcaptionbox{Self-attention dell'originale}{\includegraphics[height=90mm]{Immagini/conclusioni/rot_diag_5.png}}
+    \end{subfigure}
+
+    \vspace{3mm}
+    
+    \begin{subfigure}{0.35\textwidth}
+        \raggedright
+        \subcaptionbox{Kernel [51, 51], \(\sigma\)=9}{\includegraphics[height=90mm]{Immagini/conclusioni/blurred.png}}
+    \end{subfigure}
+    \hspace{1cm}
+    \begin{subfigure}{0.35\textwidth}
+        \raggedleft
+        \subcaptionbox{Self-attention della sfocata}{\includegraphics[height=90mm]{Immagini/conclusioni/rot_att_blur_1.png}}
+    \end{subfigure}
+    
+    
+    \caption{Le classi di ground truth sono \textit{RoT.} e \textit{Diagonal}. Dalla mappa originale è difficilmente possibile distinguere le due classi, specialmente \textit{Diagonal}. Una CNN potrebbe fare fatica a causa del rumore che circonda gli elementi chiave. Applicando uno smoothing all'immagine originale e ricalcolando la self-attention su di essa, la mappa prodotta risulta essere più chiara.}
+    \label{fig:att_rumorosa}
+\end{figure}
+
+\begin{figure}
+    \centering
+    
+    \subcaptionbox{Testa 1}{
+        \includegraphics[height=45mm]{Immagini/conclusioni/teste0.png}
+    }
+    \hspace{3mm}
+    \subcaptionbox{Testa 2}{
+        \includegraphics[height=45mm]{Immagini/conclusioni/teste1.png}
+    }
+    \vspace{2mm}
+    
+    \subcaptionbox{Testa 3}{
+        \includegraphics[height=45mm]{Immagini/conclusioni/teste2.png}
+    }
+    \hspace{3mm}
+    \subcaptionbox{Testa 4}{
+        \includegraphics[height=45mm]{Immagini/conclusioni/teste3.png}
+    }
+    \vspace{2mm}
+    
+    \subcaptionbox{Testa 5}{
+        \includegraphics[height=45mm]{Immagini/conclusioni/teste4.png}
+    }
+    \hspace{3mm}
+    \subcaptionbox{Testa 6}{
+    \includegraphics[height=45mm]{Immagini/conclusioni/teste5.png}
+    }
+    \vspace{2mm}
+
+    
+    \subcaptionbox{Originale}{
+    \includegraphics[height=45mm]{Immagini/conclusioni/teste.jpg}
+    }
+    
+    \caption{Tutte le teste di self-attention dell'ultimo transformer block per un'immagine di KU-PCP, con ground truth \textit{Horizontal}. In queste caso le migliori sono la prima e la terza, dalle altre è sostanzialmente impossibile dedurre la classe. Non è sempre vero, per altre immagini la prima e terza testa potrebbero essere le peggiori.}
+    \label{fig:attention_heads_ex}
+\end{figure}
+
+\subsection{Segmentazione delle leading lines}
+Una volta potenziata la classificazione della composizione con gli approcci menzionati, uno sviluppo interessante potrebbe essere quello di procedere alla segmentazione delle leading lines e delle bounding box dei soggetti nell'immagine, come in Figura \ref{fig:leading_lines}. 
+
+Ci sono già stati dei tentativi in letteratura di risolvere questo task, come "\textit{\citefield{sel}{title}}" \cite{sel}, che introduce SEL (\textit{semantic line dataset}), formato da 1750 immagini annotate con le coordinate del punto di inizio e il punto di fine di ciascuna linea. Il metodo da loro applicato si basa interamente su una CNN. Il vantaggio che potremmo avere usando DINOv2, rispetto ad approcci tradizionali di deep learning, è ancora una volta nelle mappe di self-attention. Come visto in Figura \ref{fig:attention_kupcp}, l'attention produce una semplificazione notevole dell'immagine, che spesso mette in risalto i contorni dei soggetti, ma anche la separazione fra aree semantiche diverse (Figura \ref{fig:attention_heads_ex}, teste 1 e 3), che può coincidere proprio con una leading line. Una base da cui partire potrebbe essere passare una di queste mappe all'interno di una CNN, come già ipotizzato, e una \textit{regression head} che produca le due coppie di coordinate dei punti per cui passa una linea.

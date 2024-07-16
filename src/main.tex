@@ -1,0 +1,50 @@
+\input{Impostazioni/packages}
+\input{Impostazioni/comandi}
+\input{Impostazioni/stile}
+
+\addbibresource{ref.bib}
+
+\begin{document}
+    % Frontespizio
+    \input{Altro/frontespizio}
+    
+    \addblankpage
+    \normalsize
+
+    \pagenumbering{roman}
+    
+    % Abstract
+    \input{Altro/abstract}
+    
+    % Table of contents
+    
+    \fancyhead[L]{}
+    \fancyhead[R]{\nouppercase{\leftmark}}
+    
+    \tableofcontents
+    \listoffigures
+    \listoftables
+
+    % Chapters
+    \newpage
+    \pagenumbering{arabic}
+    \fancyhead[L]{\chaptertitlename \ \thechapter.}
+    \include{Capitoli/1_introduzione}
+    \include{Capitoli/2_sota}
+    \include{Capitoli/3_self-supervision}
+    \include{Capitoli/4_metodo}
+    \include{Capitoli/5_datasets}
+    \include{Capitoli/6_risultati}
+    \include{Capitoli/7_conclusioni}
+
+    % Bibliography
+    \fancyhead[L]{}
+    \printbibheading[heading=bibintoc, title={Riferimenti}]
+    \printbibliography[nottype=online,heading=subbibintoc,title={Bibliografia}]
+    \printbibliography[type=online,heading=subbibintoc,title={Siti}]
+
+    \newpage
+    \fancyhead[L]{\chaptertitlename \ \thechapter.}
+    \appendix
+    \include{Capitoli/appendix_transformers}
+\end{document}

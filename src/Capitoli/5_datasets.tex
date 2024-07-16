@@ -1,0 +1,285 @@
+\chapter{Dataset}
+\label{datasets}
+Come già menzionato nel Capitolo \ref{sota}, i datasets che sono stati utilizzati in fase di sperimentazione sono due: KU-PCP (introdotto da \cite{composition_dominant_geometric}) e LODB (introdotto da \cite{graph}). Questo capitolo sarà dedicato ad esporre le caratteristiche di ciascuno e le classi di composizione fotografica che ne fanno parte.
+
+\section{KU-PCP}
+\label{kupcp}
+KU-PCP è un dataset per composizione fotografica che raccoglie immagini provenienti da siti di condivisione di fotografie, fra cui Flickr \cite{flickr} e Photo.net \cite{photonet}. È stato costruito dagli autori del paper \cite{composition_dominant_geometric} chiedendo a 18 soggetti umani con conoscenza nel settore di categorizzare le immagini in 9 classi. Di seguito l'elenco e una breve descrizione di ciascuna:
+\begin{itemize}
+    \item \textbf{RoT}: regola dei terzi, come spiegata nella Sezione \ref{rot}. I soggetti vengono posizionati lungo una delle linee che formano la griglia di suddivisione dell'immagine, o ai punti di intersezione fra queste. Guida lo sguardo dell'osservatore nell'immagine, crea armonia ed equilibrio visivo.
+    \item \textbf{Center}: il soggetto dello scatto si trova centrato nell'immagine. Può trasmettere una sensazione di stabilità e simmetria, spesso utilizzata per ritratti o per enfatizzare l'importanza del soggetto nella scena.
+    \item \textbf{Horizontal}: l'immagine presenta una leading line orizzontale. Spesso corrisponde con orizzonti e paesaggi, si vuole trasmettere un senso di vastità e calma.
+    \item \textbf{Symmetric}: gli elementi sono disposti in modo speculare rispetto a un asse centrale. Si basa sull'equilibrio visivo fra due metà dell'immagine, creando un senso di ordine e armonia. È comune in immagini di architettura o riflessioni su corpi d'acqua in natura.
+    \item \textbf{Diagonal}: l'immagine presenta una leading line diagonale. Crea dinamismo e movimento nell'immagine, possono aggiungere profondità o prospettiva alla scena.
+    \item \textbf{Curve}: come menzionato in Sezione \ref{leadinglines}, la composizione sfrutta profili curvi per creare un flusso naturale, movimento.
+    \item \textbf{Vertical}: leading lines verticali nell'immagine, spesso riferita ad edifici, alberi, elementi che si sviluppano in altezza e fotografati dal basso verso l'alto.
+    \item \textbf{Triangle}: la forma degli oggetti nell'immagine ricorda una figura triangolare. In questa categoria vengono comprese anche leading lines convergenti in distanza, a formare profili triangolari, come una strada che prosegue verso l'orizzonte.
+    \item \textbf{Pattern}: composizione basata sulla ripetizione di forme, colori o texture. Crea un forte impatto visivo e un senso di ritmo.
+\end{itemize}
+
+Il dataset è formato da 4.244 fotografie all'aperto. Di queste, circa 80\% hanno una singola classe di ground truth, mentre le rimanenti possono avere fino a 3 labels. La Tabella \ref{tab:kupcp_comp} mostra il numero di immagini per label, mentre in Figura \ref{fig:kupcp_ex} si trova un esempio di immagine per ogni classe. 
+
+\vspace{1cm}
+\begin{figure}[b]
+    \centering
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{RoT}{\includegraphics[height=40mm]{Immagini/datasets/kupcp/rot.jpg}}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedleft
+        \subcaptionbox{Vertical}{\includegraphics[height=40mm]{Immagini/datasets/kupcp/vertical.jpg}}
+    \end{subfigure}
+
+    
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{Horizontal}{\includegraphics[height=40mm]{Immagini/datasets/kupcp/horizontal.jpg}}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedleft
+        \subcaptionbox{Pattern}{\includegraphics[height=40mm]{Immagini/datasets/kupcp/pattern.jpg}}
+    \end{subfigure}
+
+    
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{Curved}{\includegraphics[height=40mm]{Immagini/datasets/kupcp/curve.jpg}}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedleft
+        \subcaptionbox{Triangle}{\includegraphics[height=40mm]{Immagini/datasets/kupcp/triangle.jpg}}
+    \end{subfigure}
+
+    
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{Center}{\includegraphics[height=40mm]{Immagini/datasets/kupcp/center.jpg}}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedleft
+        \subcaptionbox{Symmetric}{\includegraphics[height=40mm]{Immagini/datasets/kupcp/symmetric.jpg}}
+    \end{subfigure}
+
+    
+    \begin{subfigure}{\textwidth}
+        \centering
+        \subcaptionbox{Diagonal}{\includegraphics[height=40mm]{Immagini/datasets/kupcp/diagonal.jpg}}
+    \end{subfigure}
+    
+    
+    \caption{Un esempio di immagine per ciascuna classe nel dataset KU-PCP.}
+    \label{fig:kupcp_ex}
+\end{figure}
+
+
+    
+\begin{table}[ht]
+    \centering
+    \setlength{\tabcolsep}{4pt} % horizontal padding
+    \renewcommand{\arraystretch}{1.6} %height
+    \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c}
+        & \textit{RoT} & \textit{Center} & \textit{Horiz.} & \textit{Symm.} & \textit{Diag.} & \textit{Curved} & \textit{Vert.} & \textit{Triangle} & \textit{Patt.} & \textit{Total} \\
+        \hline
+        \hline
+        \textit{RoT} & 71 & 10 & 39 & 3 & 5 & 0 & 0 & 0 & 0 & 124 \\
+        \hline
+        \textit{Center} & 10 &224&6&9&7&1&4&52&0&310 \\
+        \hline
+        \textit{Horiz.}& 39&6&97&0&37&21&3&12&0&210 \\
+        \hline
+        \textit{Symm.} &3&9&0&78&6&1&3&2&0&100 \\
+        \hline
+        \textit{Diag.} &5&7&37&6&117&18&3&1&1&188 \\
+        \hline
+        \textit{Curve}& 0&1&21&1&18&45&0&7&1&91  \\
+        \hline
+        \textit{Vert.}& 0&4&3&3&3&0&47&8&0&65 \\
+        \hline
+        \textit{Triangle}& 0&52&12&2&1&7&8&91&0&171 \\
+        \hline
+        \textit{Patt.}& 0&0&0&0&1&1&0&0&61&63 \\
+    
+    \end{tabular}
+    
+    \caption{Distribuzione delle classi nel dataset KU-PCP nella partizione di test. Siccome alcune immagini hanno 3 classi di ground-truth, può essere che un totale sia più piccolo della somma della riga corrispondente.}
+    \label{tab:kupcp_comp}
+    
+\end{table}
+\clearpage
+\section{LODB}
+\label{lodb}
+Il dataset LODB viene creato dagli autori di \cite{graph} appositamente per compensare a quelle che loro individuano come debolezze di KU-PCP:
+\begin{itemize}
+    \item \textbf{Scarsa varianza semantica intraclasse}. Le immagini che appartengono ad una stessa classe sono troppo simili fra loro, che può condurre i modelli allenati su di esse ad avere una comprensione troppo limitata del concetto che l'etichetta esprime.
+    \item Il dataset contiene solamente \textbf{foto professionali}, come osservato da \cite{spatial_invariant_cnn} (Sezione \ref{spatial-invariant-cnn}). Questo può creare un ambiente di apprendimento troppo perfetto, rendendo le prestazioni dei modelli scarse a fronte di immagini che presentano leggeri difetti, snapshots.
+    \item \textbf{Coarse granularity}. Le classi sono troppo generiche, codificano aspetti di composizione troppi ampi e generici.
+\end{itemize}
+
+Si raccolgono immagini provenienti da diversi altri datasets open source di valutazione dell'estetica delle fotografie, e come per KU-PCP, si lascia che un gruppo di esperti le categorizzino in classi di composizione. Il risultato è un dataset di 6029 immagini e 17 classi, molto più granulari rispetto a KU-PCP. Un totale di 168 immagini possiedono etichetta doppia, non ci sono immagini con 3 o più classi di ground truth. In Tabella \ref{tab:lodb_comp} sono presentate tutte le label introdotte e in Figura \ref{fig:lodb_ex} un esempio per ciascuna.
+
+\begin{table}[ht]
+    \centering
+    \setlength{\tabcolsep}{4pt} % horizontal padding
+    \renewcommand{\arraystretch}{1.6} %height
+    \begin{tabular}{c|m{8cm}|c}
+        \hline
+        \textbf{Nome} & \textbf{Descrizione} & \textbf{Numero} \\
+        \hline
+        \hline
+        \textit{Cent.} & Soggetto centrato nell'immagine & 947 \\
+        \hline
+        \textit{RoT.L} & Regola dei terzi, soggetto allineato con la griglia a sinistra & 214 \\
+        \hline
+        \textit{RoT.R} & Regola dei terzi, soggetto allineato con la griglia a destra & 275 \\
+        \hline
+        \textit{O2Dia.L} & Due oggetti disposti diagonalmente, dall'angolo in alto a sinistra & 301 \\
+        \hline
+        \textit{O2Dia.R} & Due oggetti disposti diagonalmente, dall'angolo in alto a destra & 293 \\
+        \hline
+        \textit{O2Hor.} & Due oggetti posizionati su una linea orizzontale & 386 \\
+        \hline
+        \textit{03Li.} & Tre oggetti posizionati sulla stessa linea & 157 \\
+        \hline
+        \textit{03Tri.} & Composizione triangolare formata da 3 oggetti & 115 \\
+        \hline
+        \textit{Oline.} & Più di tre oggetti posizionati sulla stessa linea & 110 \\
+        \hline
+        \textit{Pat.} & L'immagine contiene dei patterns & 255 \\
+        \hline
+        \textit{DiaL.} & Composizione a diagonale, dall'angolo in alto a sinistra & 446 \\
+        \hline
+        \textit{DiaR.} & Composizione a diagonale, dall'angolo in alto a destra & 236 \\
+        \hline
+        \textit{Hor.} & Struttura orizzontale & 574 \\
+        \hline
+        \textit{Tri.} & Struttura triangolare & 451 \\
+        \hline
+        \textit{Ver.} & Struttura verticale & 455 \\
+        \hline
+        \textit{Radi.} & Struttura radiale & 187 \\
+        \hline
+        \textit{DiaX.} & Struttura comprendente entrambe le diagonali & 861 \\
+        \hline
+    \end{tabular}
+    
+    \caption{Distribuzione delle classi nel dataset LODB.}
+    \label{tab:lodb_comp}
+    
+\end{table}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{Cent.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/center.jpg}}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedleft
+        \subcaptionbox{Pat.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/pat.jpg}}
+    \end{subfigure}
+    \vspace{2mm}
+
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{RoT.L}{\includegraphics[height=40mm]{Immagini/datasets/lodb/rotl.jpg}}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedleft
+        \subcaptionbox{RoT.R}{\includegraphics[height=40mm]{Immagini/datasets/lodb/rotr.jpg}}
+    \end{subfigure}
+    \vspace{2mm}
+    
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{O2Dia.L}{\includegraphics[height=40mm]{Immagini/datasets/lodb/o2dial.jpg}}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedleft
+        \subcaptionbox{O2Dia.R}{\includegraphics[height=40mm]{Immagini/datasets/lodb/o2diar.jpg}}
+    \end{subfigure}
+    \vspace{2mm}
+    
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{O2Hor.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/o2hor.jpg}}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedleft
+        \subcaptionbox{Hor.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/hor.jpg}}
+    \end{subfigure}
+    
+    \vspace{2mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{O3Li.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/o3li.jpg}}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedleft
+        \subcaptionbox{O3Tri.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/o3tri.jpg}}
+    \end{subfigure}
+
+\end{figure}
+
+\begin{figure}[ht]\ContinuedFloat
+    \centering
+
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{DiaL.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/dial.jpg}}
+    \end{subfigure}
+    \hspace{10mm}
+    \begin{subfigure}{0.5 \textwidth}
+        \raggedleft
+        \subcaptionbox{DiaR.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/diar.jpg}}
+    \end{subfigure}
+    \vspace{3mm}
+
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{Tri.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/tri.jpg}}
+    \end{subfigure}
+    \hspace{10mm}
+    \begin{subfigure}{0.5 \textwidth}
+        \raggedleft
+        \subcaptionbox{Ver.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/ver.jpg}}
+    \end{subfigure}
+    \vspace{3mm}
+
+    \begin{subfigure}{0.3 \textwidth}
+        \raggedright
+        \subcaptionbox{Radi.}{\includegraphics[height=45mm]{Immagini/datasets/lodb/radi.jpg}}
+    \end{subfigure}
+    \hspace{10mm}
+    \begin{subfigure}{0.5 \textwidth}
+        \raggedleft
+        \subcaptionbox{Oline}{\includegraphics[height=45mm]{Immagini/datasets/lodb/oline.jpg}}
+    \end{subfigure}
+    \vspace{3mm}
+
+    \hspace{0.29mm}
+    \begin{subfigure}{0.4\textwidth}
+        \subcaptionbox{DiaX.}{\includegraphics[height=40mm]{Immagini/datasets/lodb/diax.jpg}}
+    \end{subfigure}
+    \hspace{0.29mm}
+    
+    \caption{Un esempio di immagine per ciascuna classe nel dataset LODB.}
+    \label{fig:lodb_ex}
+\end{figure}
+
+
+\section{Considerazioni}
+Il dataset KU-PCP è il più utilizzato in ambito di classificazione della composizione fotografica. Di conseguenza esiste un metro di paragone fra i risultati che otteniamo in questo studio e quelli proposti da altri papers. Più volte, però, vengono messi in evidenza i suoi difetti (come detto in Sezione \ref{spatial-invariant-cnn} e precentemente nel definire LODB). 
+
+LODB è stato introdotto molto recentemente (marzo 2024) insieme a \cite{graph}, (Sezione \ref{graph}). Essendo così nuovo, ancora non esistono altri paper che ne fanno uso per allenare i propri modelli, quindi non esistono studi sulla sua bontà, al di fuori di quello avanzato dai creatori. L'unico confronto che si può effettuare in termini di prestazioni è quello con i risultati proposti nello stesso paper \cite{graph} in cui LODB viene introdotto. Inoltre, come si nota dalla Tabella \ref{tab:lodb_comp}, la cardinalità delle classi è molto sbilanciata, passando da classi come \textit{Center} con 947 immagini, a classi come \textit{Oline} con solamente 110.
+
+Visti i pro e contro di entrambi, si è deciso di effettuare la fase sperimentale sia su KU-PCP che su LODB e compararne le prestazioni.
